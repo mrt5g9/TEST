@@ -1,0 +1,148 @@
+>>> import arcpy
+>>> from arcpy import env
+>>> print "Hi"
+Hi
+>>> print arcpy.ListEnvironments()
+[u'newPrecision', u'autoCommit', u'XYResolution', u'XYDomain', u'scratchWorkspace', u'cartographicPartitions', u'terrainMemoryUsage', u'MTolerance', u'compression', u'coincidentPoints', u'randomGenerator', u'outputCoordinateSystem', u'rasterStatistics', u'ZDomain', u'transferDomains', u'resamplingMethod', u'snapRaster', u'projectCompare', u'cartographicCoordinateSystem', u'configKeyword', u'outputZFlag', u'qualifiedFieldNames', u'tileSize', u'parallelProcessingFactor', u'pyramid', u'referenceScale', u'extent', u'XYTolerance', u'tinSaveVersion', u'nodata', u'MDomain', u'spatialGrid1', u'cellSize', u'outputZValue', u'outputMFlag', u'geographicTransformations', u'spatialGrid2', u'ZResolution', u'mask', u'spatialGrid3', u'maintainSpatialIndex', u'workspace', u'MResolution', u'derivedPrecision', u'ZTolerance', u'scratchGDB', u'scratchFolder', u'packageWorkspace', u'addOutputsToMap']
+>>> env.workspace = "E:\\Lab_1\\Data"
+>>> env.extent = "E:\\Lab_1\\Data\\MOTornadoTracks.shp"
+>>> print env.extent
+44034.9909450899 -315258.096384846 701281.696752604 292872.282081833 NaN NaN NaN NaN
+>>> arcpy.env.outputCoordinateSystem = "E:\\Lab_1\\Data\\MOTornadoTracks.prj"
+>>> print arcpy.env.outputCoordinateSystem
+<geoprocessing spatial reference object object at 0x35A57EC0>
+>>> arcpy.Rename_management("E:\\Lab_1\\Data\\MOTornadoTracks.shp","E:\\Lab_1\\Data\\MOTornadoPaths.shp")
+<Result 'E:\\Lab_1\\Data\\MOTornadoPaths.shp'>
+>>> inputFC = ""E:\\Lab_1\\Data\\MOTornadoPaths.shp"
+Parsing error SyntaxError: invalid syntax (line 1)
+>>> inputFC = "E:\\Lab_1\\Data\\MOTornadoPaths.shp"
+>>> outputFC = "E:\\Lab_1\\Data\\MOTornadoPaths2.shp"
+>>> arcpy.Rename_management(inputFC,outputFC)
+<Result 'E:\\Lab_1\\Data\\MOTornadoPaths2.shp'>
+>>> arcpy.FeatureToPoint_management("MOTornadoPaths2","E:\\Lab_1\\Data\\MOTornadoCentroid.shp","CENTROID")
+<Result 'E:\\Lab_1\\Data\\MOTornadoCentroid.shp'>
+>>> arcpy.FeatureVerticesToPoints_management("MOTornadoPaths2","E:\\Lab_1\\Data\\MOTornadoTracks.shp","E:\\Lab_1\\Data\\MOTornadoEndPoints.shp","BOTH_ENDS")
+Runtime error 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: FeatureVerticesToPoints() takes at most 3 arguments (4 given)
+>>> arcpy.FeatureVerticesToPoints_management("MOTornadoPaths2","E:\\Lab_1\\Data\\MOTornadoEndPoints.shp","BOTH_ENDS")
+<Result 'E:\\Lab_1\\Data\\MOTornadoEndPoints.shp'>
+>>> arcpy.Densify_edit("MOTornadoPaths2","DISTANCE","1000 meters")
+<Result 'MOTornadoPaths2'>
+>>> arcpy.FeatureVerticesToPoints_management("MOTornadoPaths2","E:\\Lab_1\\Data\\MOTornadoVertices.shp","ALL")
+<Result 'E:\\Lab_1\\Data\\MOTornadoVertices.shp'>
+>>> desc = arcpy.Describe("MOTornadoEndPoints")
+>>> desc = arcpy.Describe("MOTornadoEndPoints").Extent
+>>> print desc
+44034.9909450899 -315258.096384846 701281.696752604 292872.282081833 NaN NaN NaN NaN
+>>> West = arcpy.Describe("MOTornadoEndPoints").Extent.XMin
+>>> South = arcpy.Describe("MOTornadoEndPoints").Extent.YMin
+... 
+>>> print South
+-315258.096385
+>>> East = arcpy.Describe("MOTornadoEndPoints").Extent.XMax
+>>> print East
+701281.696753
+>>> North = arcpy.Describe("MOTornadoEndPoints").Extent.YMax
+>>> print North
+292872.282082
+>>> XYmin = str(West)
+>>> XYmin = str(West) + " " + str(South)
+>>> print XYmin
+44034.9909451 -315258.096385
+>>> XYminmod = str(West) + " " + str(South+10)
+>>> print XYminmod
+44034.9909451 -315248.096385
+>>> XYmax = str(East) + " " + str(North)
+>>> print XYmax
+701281.696753 292872.282082
+>>> arcpy.CreateFishnet_management("MOAnalysisUnits.shp",XYmin,XYminmod,5000,5000,0,0,XYmax,"#","#","POLYGON")
+<Result 'E:\\Lab_1\\Data\\MOAnalysisUnits.shp'>
+>>> arcpy.CreateFishnet_management("MOAnalysisUnits2.shp",XYmin,XYminmod,15000,15000,0,0,XYmax,"#","#","POLYGON")
+<Result 'E:\\Lab_1\\Data\\MOAnalysisUnits2.shp'>
+>>> 
+
+lab 1 continued...
+
+>>> import arcpy
+>>> from arcpy import env
+>>> env.workspace("E:\\Lab_1\\Data")
+Runtime error 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+TypeError: 'unicode' object is not callable
+>>> env.workspace = "E:\\Lab_1\\Data"
+>>> West
+Runtime error 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+NameError: name 'West' is not defined
+>>> print(West)
+Runtime error 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+NameError: name 'West' is not defined
+>>> West = arcpy.Describe("MOTornadoEndPoints").Extent.XMin
+>>> West
+44034.990945089936
+>>> print(West)
+44034.9909451
+>>> South = arcpy.Describe("MOTornadoEndPoints").Extent.YMin
+>>> print South
+-315258.096385
+>>> East = arcpy.Describe("MOTornadoEndPoints").Extent.XMax
+>>> East
+701281.6967526036
+>>> North = arcpy.Describe("MOTornadoEndPoints").Extent.YMax
+>>> North
+292872.2820818331
+>>> XYmin = str(West) + " " + str(South)
+>>> XYmin
+'44034.9909451 -315258.096385'
+>>> XYminmod = str(West) + " " + str(South + 10)
+>>> XYminmod
+'44034.9909451 -315248.096385'
+>>> XYmax = str(East) + " " + str(North)
+>>> XYmax
+'701281.696753 292872.282082'
+>>> arcpy.CreateFishnet_management("E:\\Lab_1\\Data\\2000mFN.shp",XYmin,XYminmod,5000,5000,0,0,XYmax,"#","#","POLYGON")
+<Result 'E:\\Lab_1\\Data\\2000mFN.shp'>
+>>> arcpy.CreateFishnet_management("E:\\Lab_1\\Data\\2000mFN.shp",XYmin,XYminmod,2000,2000,0,0,XYmax,"#","#","POLYGON")
+Runtime error  Traceback (most recent call last):   File "<string>", line 1, in <module>   File "c:\program files (x86)\arcgis\desktop10.2\arcpy\arcpy\management.py", line 1874, in CreateFishnet     raise e ExecuteError: ERROR 000725: Output Feature Class: Dataset E:\Lab_1\Data\2000mFN.shp already exists.  
+>>> arcpy.CreateFishnet_management("E:\\Lab_1\\Data\\2000mFN.shp",XYmin,XYminmod,2000,2000,0,0,XYmax,"#","#","POLYGON")
+<Result 'E:\\Lab_1\\Data\\2000mFN.shp'>
+>>> fieldmappings = arcpy.FieldMappings()
+>>> fieldmappings.addTable("E:\\Lab_1\\Data\\2000mFN.shp")
+>>> fieldmappings.addTable("E:\\Lab_1\\Data\\MOTornadoEndPoints.shp")
+>>> FSCALEFieldIndex = fieldmappings.findFieldMapIndex("FSCALE")
+>>> fieldmap = fieldmappings.getFieldMap(FSCALEFieldIndex)
+>>> field = fieldmap.outputField
+>>> field.name = "meanFscale"
+>>> field.aliasName = "meanFscale"
+>>> fieldmap.outputField = field
+>>> fieldmap.mergeRule = "mean"
+>>> fieldmappings.replaceFieldMap(FSCALEFieldIndex,fieldmap)
+>>> arcpy.SpatialJoin_analysis("2000mFN","MOTornadoEndPoints","TornadoEventSummary.shp","JOIN_ONE_TO_ONE","KEEP_ALL",fieldmappings,"INTERSECT")
+<Result 'E:\\Lab_1\\Data\\TornadoEventSummary.shp'>
+>>> Mymxd = arcpy.mapping.MapDocument("E:\\Lab_1\\Thorsby_Lab1.mxd")
+>>> Mymxd.saveACopy("bkupmxd")
+Runtime error 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "c:\program files (x86)\arcgis\desktop10.2\arcpy\arcpy\utils.py", line 181, in fn_
+    return fn(*args, **kw)
+  File "c:\program files (x86)\arcgis\desktop10.2\arcpy\arcpy\_mapping.py", line 828, in saveACopy
+    self._arc_object.saveACopy(file_name)
+AttributeError: MapDocObject: Unable to save.  Check to make sure you have write access to the specified file and that there is enough space on the storage device to hold your document.
+>>> Mymxd.saveACopy("bkupmxd.mxd")
+>>> Mymxd.save()
+Runtime error 
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "c:\program files (x86)\arcgis\desktop10.2\arcpy\arcpy\utils.py", line 181, in fn_
+    return fn(*args, **kw)
+  File "c:\program files (x86)\arcgis\desktop10.2\arcpy\arcpy\_mapping.py", line 801, in save
+    return convertArcObjectToPythonObject(self._arc_object.save(*gp_fixargs((), True)))
+IOError: MapDocObject: Unable to save.  Check to make sure you have write access to the specified file and that there is enough space on the storage device to hold your document.
+>>> 
